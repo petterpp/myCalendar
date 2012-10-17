@@ -1,0 +1,132 @@
+/*
+    Document   : style
+    Created on : Sep 15, 2012, 8:29:32 PM
+    Author     : Jacob
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*****************************************************************************
+Global Structure
+*****************************************************************************/
+
+#page {
+    margin-top: 100px;
+}
+
+#page_top {
+	height: 5px;
+	background: url("../images/new/page_top_corners.png") no-repeat;
+}
+
+#page_container, .page_container {
+	font-family: "Lucida Grande", Arial, sans-serif;
+	background: #fff url("../images/new/page_bg.gif") repeat-y;
+	zoom:1;
+}
+
+.page_gradient {
+	background: #fff url("../images/new/page_gradient.gif") repeat-x;
+}
+
+.page_sub_body {
+	padding: 20px;
+	margin: 0 1px 0 1px;
+	border-bottom: 1px solid #d7d7d7;
+	zoom: 1;
+}
+
+h2.page_header {
+	margin-bottom: 20px;
+}
+
+/*****************************************************************************
+Subpages
+*****************************************************************************/
+.subpage h2.page_header {
+	padding: 10px 20px 15px 20px;
+	margin: 0 1px 0 1px;
+	border-bottom: 1px solid #d7d7d7;
+}
+
+h2, h2 a {
+    color: #222222;
+    font-family: "Lucida Grande","Lucida Sans","Lucida Sans Unicode",Arial,sans-serif;
+    font-size: 18px;
+    line-height: normal;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+body
+{
+    font-family: sans-serif;
+    font-size: 10px;
+    color: #000000;
+    padding-top: 30px;    
+    margin: 0 auto;
+    width: 640px;
+}
+
+#body_inner {
+    color: #666666;
+    font: 12px "Lucida Grande",Arial,sans-serif;
+}
+
+.rounded_container_blue {
+    background: none repeat scroll 0 0 #D7EFFD;
+    border: 1px solid #76C3F4;
+    padding: 30px 20px 20px;
+}
+
+div.label_container label {
+    color: #555555;
+    font-size: 14px;
+}
+
+div.field_row {
+    margin-bottom: 10px;
+    padding: 0 0 15px;
+}
+
+div.label_container {
+    float: left;
+    margin-top: 8px;
+    padding-right: 15px;
+    width: 145px;
+}
+
+div.field_container input {
+    width: 300px;
+}
+input {
+    font-size: 14px;
+    padding: 5px;
+}
+
+element.style {
+    padding-top: 15px;
+}
+
+div.final_row input.submit_button {
+    float: left;
+    margin-right: 15px;
+    outline: medium none;
+    padding: 0;
+}
+
+a:hover {
+    color: #008EE8;
+    text-decoration: underline;
+}
+
+a {
+    color: #008EE8;
+    cursor: pointer;
+    outline: medium none;
+    text-decoration: none;
+}
+
+.small_text {
+    font-size: 10px;
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!-- =========== FULL CONFIGURATION FILE ==================== -->
+
+<faces-config 
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+
+    <managed-bean>
+        <managed-bean-name>loginbean</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.controller.loginbeanController</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    
+    <navigation-rule>
+        <description>Loging Page</description>
+        
+        <navigation-case>
+            
+            <from-outcome>valid</from-outcome>
+            <to-view-id>faces/welcomePrimefaces.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            
+            <from-outcome>invalid</from-outcome>
+            <to-view-id>/pages/loginfail.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <managed-bean>
+        <managed-bean-name>CalendarBean</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.bean.CalendarBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+    <navigation-rule>
+        <description>Loging Page</description>
+        <from-view-id>/welcomePrimefaces.xhtml</from-view-id>
+        
+        <!--<navigation-case>
+            
+            <from-outcome>valid</from-outcome>
+            <to-view-id>/pages/success.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            
+            <from-outcome>invalid</from-outcome>
+            <to-view-id>/pages/loginfail.jsp</to-view-id>
+            <to-view-id>faces/welcomePrimefaces.xhtml</to-view-id>
+        </navigation-case>-->
+    </navigation-rule>
+    
+    <managed-bean>
+        <managed-bean-name>taskTree</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.controller.TaskTreeController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>categoryController</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.controller.CategoryController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+    <!--<navigation-rule>
+        <description>ReLoging Page</description>
+        <from-view-id>faces/pages/login_fail.jsp</from-view-id>
+        <navigation-case>
+            <from-action>#{login_bean.checkValidUser}</from-action>
+            <from-outcome>valid</from-outcome>
+            <to-view-id>faces/pages/success.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{login_bean.checkValidUser}</from-action>
+            <from-outcome>invalid</from-outcome>
+            <to-view-id>faces/pages/login_fail.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>-->
+    
+    <!--<application>
+        <message-bundle>messages.message</message-bundle>
+    </application>-->
+    
+</faces-config>
