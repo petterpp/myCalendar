@@ -15,6 +15,7 @@ public class Global {
     private static int userId = 0;
     private static String userName = "";
     
+    public static String strTempText = "";
     public static List<String> strTreeType = new ArrayList<String>();
     public static List<String> strTreeName = new ArrayList<String>();
     
@@ -34,11 +35,4 @@ public class Global {
         userName = name;
     }
     
-    public static List<String> getStrTreeType() {
-        return strTreeType;
-    }
-    
-    public static void setStrTreeType(List<String> type) {
-        strTreeType = type;
-    }
 }

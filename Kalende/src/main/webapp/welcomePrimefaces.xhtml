@@ -10,90 +10,94 @@
             <f:facet name="first">
                 <title>Mine Kalendar</title>
             </f:facet>
-            <link rel="stylesheet" type="text/css" href="../cupotino.css" />
-            
+            <link type="text/css" rel="stylesheet" href="/project/faces/javax.faces.resource/theme.css?ln=primefaces-cupertino" />
+            <link rel="stylesheet" type="text/css" href="../cupertino.css" />
+            <link rel="stylesheet" type="text/css" href="../CSS/schedule.css" />
+
+            <script type="text/javascript">  
+                function handleLoginRequest(xhr, status, args) {  
+                    if(args.validationFailed || !args.loggedIn) {  
+                        jQuery('#form .ui-dialog').effect("shake", { times:3 }, 100);
+                    } else {  
+                        jQuery('#form .ui-tree').effect("", { time:1}, 100);
+                        dlg.hide();  
+                    }  
+                }  
+            </script>
         </h:head>
-        
+
         <h:body>
             <h:form id="form">
-            <p:growl id="messages" showDetail="true" /> 
+                <p:growl id="growl" showDetail="true" />
 
-            <p:layout fullPage="true">
+                <p:layout fullPage="true">
 
-                <p:layoutUnit position="north" size="100" resizable="true" closable="true" collapsible="true">
-                    Mine Kalender
-                </p:layoutUnit>
+                    <p:layoutUnit position="north" size="100" resizable="true" closable="true" collapsible="true">
+                        <h1>Mine Kalendar</h1>
+                    </p:layoutUnit>
 
-                <!--Left Panel-->
-                <p:layoutUnit position="west" size="225" header="Left" collapsible="true" resizable="true">
-                    <!--Calendar-->
-                    <p:calendar value="#{CalendarBean.date1}" mode="inline" id="inlineCal"  style="display: block;" />
-                    
-                    <!--Task Tree-->
-                    <h:form id="treeCategory">
-                    <p:tree id="docTree" value="#{taskTreeController.root}" var="task" animate="true" 
-                            dynamic="true" cache="false" selectionMode="single" selection="#{taskTreeController.selectedNode}">  
-                        
-                        <p:ajax event="expand" update=":form:messages" listener="#{taskTreeController.onNodeExpand}" />  
-                        <p:ajax event="collapse" update=":form:messages" listener="#{taskTreeController.onNodeCollapse}" />  
-                        <p:ajax event="select" update=":form:messages" listener="#{taskTreeController.onNodeSelect}" />  
-                        <p:ajax event="unselect" update=":form:messages" listener="#{taskTreeController.onNodeUnselect}" />
-        
-                        <p:treeNode type="category">
-                            <h:outputText value="#{task}"/>
-                        </p:treeNode>
+                    <!--Left Panel-->
+                    <p:layoutUnit position="west" size="225" header="Left" collapsible="true" resizable="true">
+                        <!--Calendar-->
+                        <p:calendar value="#{CalendarBean.date1}" mode="inline" id="inlineCal"  style="display: block;" />
 
-                        <p:treeNode type="project" icon="ui-icon-document">
-                            <h:outputText value="#{task}" />  
-                        </p:treeNode>  
+                        <!--Task Tree Panel-->
+                        <p:panel id="categoryPanel" header="Categories" >
+                            <p:tree id="docTree" value="#{taskTreeBean.root}" var="task" 
+                                    cache="true" selectionMode="single"  dynamic="true"
+                                    selection="#{taskTreeBean.selectedNode}">  
 
-                        <p:treeNode type="task" icon="ui-icon-image">  
-                            <h:outputText value="#{task}" />  
-                        </p:treeNode>
+                                <p:ajax event="expand" update=":form:growl" listener="#{taskTreeBean.onNodeExpand}" />  
+                                <p:ajax event="collapse" update=":form:growl" listener="#{taskTreeBean.onNodeCollapse}" />  
+                                <p:ajax event="select" update=":form:growl" listener="#{taskTreeBean.onNodeSelect}" />  
+                                <p:ajax event="unselect" update=":form:growl" listener="#{taskTreeBean.onNodeUnselect}" />
 
-                        <p:treeNode type="new">
-                            <p:commandButton value="#{task}" ajax="true" rendered="true"
-                                             actionListener="#{taskTreeController.getTreeNodeInfo}"
-                                             onclick="#{taskTreeController.showDlg()}" />
-                        </p:treeNode>
-                        
-                    </p:tree>
-                    </h:form>
-                    
-                </p:layoutUnit>
+                                <p:treeNode type="category">
+                                    <h:outputText value="#{task}"/>
+                                </p:treeNode>
 
-                <p:layoutUnit position="center" resizable="true" >
-                    
-                    <ui:include src="/pages/schedule.xhtml" />
+                                <p:treeNode type="project" icon="ui-icon-document">
+                                    <h:outputText value="#{task}" />  
+                                </p:treeNode>  
 
-                </p:layoutUnit>
+                                <p:treeNode type="task" icon="ui-icon-image">  
+                                    <h:outputText value="#{task}" />  
+                                </p:treeNode>
 
-            </p:layout>
-            
-            <!--Register New Item Dialog-->
-            <p:dialog header="#{taskTreeController.dlgHeader}" widgetVar="dlg" resizable="false" >  
+                                <p:treeNode type="new" >
+                                    <p:commandButton id ="newCategory" value="#{task}" 
+                                                        actionListener="#{taskTreeBean.regNewCategory}" 
+                                                        oncomplete="dlg.show()" />
+                                </p:treeNode>
+                            </p:tree>
+                        </p:panel>
+                    </p:layoutUnit>
 
-                <h:panelGrid columns="2" style="margin-bottom:10px">  
-                    <h:outputLabel for="name" value="Category Name:" />  
-                    <p:inputText id="regName" value="#{taskTreeController.regName}" />  
-                </h:panelGrid>  
+                    <!--Center Panel-->
+                    <p:layoutUnit position="center" resizable="true" >
+                        <ui:include src="/pages/schedule.xhtml" />
+                    </p:layoutUnit>
+                </p:layout>
 
-                <p:commandButton id="submitButton" value="Submit" type="submit" action="#{taskTreeController.submitAction}"
-                                 update="treeCategory" oncomplete="#{taskTreeController.submitConfirm()}"/>  
+                <!--Register New Item Dialog-->
+                <p:dialog id="ajaxDlg" header="New Category Register Dialog" widgetVar="dlg" dynamic="true" 
+                          resizable="false" width="415" style="font-size: 1em;">  
 
-            </p:dialog>
-            
-            <!--Confirm Dialog-->
-            <p:confirmDialog id="confirmDialog" message="Please select a category."  
-                header="Confirm Dialog" severity="alert" widgetVar="confirmation">  
-                  
-                <p:commandButton id="decline" value="Ok" onclick="confirmation.hide()" type="button" />   
+                        <h:panelGrid columns="2" cellpadding="5">  
+                            <h:outputLabel for="lblRegName" value="New Name : *" />  
+                            <p:inputText value="#{taskTreeBean.regName}" 
+                                    id="lblRegName" required="true" label="Register Name" />
 
-            </p:confirmDialog> 
-            
+                            <f:facet name="footer">  
+                                <p:commandButton id="loginButton" value="Login" update=":form:growl, :form:docTree"   
+                                    actionListener="#{taskTreeBean.categoryReg}" 
+                                    oncomplete="handleLoginRequest(xhr, status, args)" style="font-size: 1em;">
+                                </p:commandButton>
+                            </f:facet>  
+                        </h:panelGrid>  
+
+                </p:dialog>
             </h:form>
         </h:body>
-
     </f:view>
 </html>
-

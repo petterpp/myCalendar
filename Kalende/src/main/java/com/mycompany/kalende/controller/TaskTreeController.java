@@ -17,8 +17,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.ManagedBean;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -40,19 +43,23 @@ import org.primefaces.model.TreeNode;
  *
  * @author Jacob
  */
-@ManagedBean
-@SessionScoped
+@ManagedBean(name="taskTreeBean")
+@RequestScoped
+
 public class TaskTreeController {
     private TreeNode root;
     
-    private String name;        //label name in New Category Dialog
-    private String regName;     //text name in New Category Dialog
-    private String dlgHeader;   //Header in New Category Dialog
-    private String dlg;         //Dialog Show Command
-    private String confirmation;    //Confirm Show Command
+    private String lblRegName;       //label lblRegName in New Category Dialog
+    private String regName;          //New Name text in New Category Dialog
+    public String dlgHeader;        //Header in New Category Dialog
+    public String strSelTreeType = "";      //Now selected tree's node name
     
     private String strSelectedTreeType = "";     //Selected Type Controll Name in Tree
     private String strSelectedTreeName = "";     //Selected Leaf or Node Name in Tree
+    
+    public int iCategoryId;     //Check Category Id in New Register Action
+    public int iProjectId;      //Check Project Id in New Register Action
+    public int iTaskId;         //Check Task Id in New Tegister Action
     
     private UserDAO userDAO;
     private CategoryDAO categoryDAO;
@@ -64,8 +71,13 @@ public class TaskTreeController {
     public List<Task> taskList = new ArrayList<Task>();
     
     private TreeNode selectedNode; 
-  
+    
     public TaskTreeController() {
+               
+    }
+    
+    @PostConstruct
+    public void init() {
         categoryList = getCategoryDAO().findList(Global.getUserId());
         
         TreeNode[] categoryName = new TreeNode[100];
@@ -73,6 +85,7 @@ public class TaskTreeController {
         TreeNode[] taskName = new TreeNode[100];
         
         root = new DefaultTreeNode("root", null);
+        root.setExpanded(true);
         
         for (int i = 0; i < categoryList.size(); i ++ ) {
             categoryName[i] = new DefaultTreeNode("category", categoryList.get(i).getCategoryName(), root);
@@ -92,18 +105,184 @@ public class TaskTreeController {
         
         TreeNode nextCategory = new DefaultTreeNode("new", "New Category", root);
         nextCategory.setSelectable(false);
+    }
+    
+    public void categoryReg(ActionEvent event) {
+        String strSelTreeName = "";
+        String strSelTreeType = "";
         
+        RequestContext context = RequestContext.getCurrentInstance();  
+        FacesMessage msg = null;  
+        boolean loggedIn = false;  
+          
+        try {
+            strSelTreeName = Global.strTreeName.get(Global.strTreeName.size()-1);
+            strSelTreeType = Global.strTreeType.get(Global.strTreeType.size()-1);
+        } catch (Exception ex) {
+            
+        }
+        
+        if (strSelTreeType.equals("category")) {
+            if (!getCategoryDAO().findExistCategory(Global.getUserId(), getRegName())) {
+                Category category = new Category();
+                category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
+                category.setCategoryName(getRegName());
+                category.setUserId(Global.getUserId());
+
+                getCategoryDAO().save(category);
+                
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Category '" +getRegName()+ "'");
+            } else {
+                loggedIn = false;
+                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Category as same name.");
+            }
+        } else if (strSelTreeType.equals("project")) {
+            iCategoryId = getProjectDAO().find(strSelTreeName).getCategoryId();
+            
+            if (!getProjectDAO().findExistProject(iCategoryId, getRegName())) {
+                Project project = new Project();
+                project.setCategoryId(iCategoryId);
+                project.setProjectId(getProjectDAO().getMaxProjectId()+1);
+                project.setProjectNaem(getRegName());
+                
+                getProjectDAO().save(project);
+                
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Project '" +getRegName()+ "'");
+            } else {
+                loggedIn = false;
+                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Project as same name.");
+            }
+        } else if (strSelTreeType.equals("Task")) {
+            iProjectId = getTaskDAO().find(strSelTreeName).getProjectId();
+            
+            if (!getTaskDAO().findExistTask(iProjectId, getRegName())) {
+                Task task = new Task();
+                task.setTaskId(getTaskDAO().getMaxTaskId()+1);
+                task.setProjectId(iProjectId);
+                task.setTaskName(getRegName());
+                
+                getTaskDAO().save(task);
+                
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Task '" +getRegName()+ "'");
+            } else {
+                loggedIn = false;
+                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Task as same name.");
+            }
+        }
+        init();
+        FacesContext.getCurrentInstance().addMessage(null, msg);  
+        context.addCallbackParam("loggedIn", loggedIn);
+    }
+    
+    /**
+     * @description: Get action to Save Dialog 
+     */
+    public String submitConfirm() {
+        String strSubmit = "";
+        
+        
+        return strSubmit;
+    }
+    
+    public void regNewCategory(ActionEvent event) {
+        System.out.print("Button Click");
+        try {
+            strSelTreeType = Global.strTreeType.get(Global.strTreeType.size()-1);
+        } catch (Exception ex) {
+            
+        }
+        
+        if (strSelTreeType.equals("category")) {
+            dlgHeader = "Category New Register";
+            lblRegName = "New Category Name: *";
+        } else if (strSelTreeType.equals("project")) {
+            dlgHeader = "Project New Register";
+            lblRegName = " New Project Name: *";
+        } else if (strSelTreeType.equals("task")) {
+            dlgHeader = "Task New Register";
+            lblRegName = " New  Task  Name : *";
+        }
+//        showDlg();
+    }
+    
+    /*
+     * @discription Show Dialog from "New Category"
+     */
+    public String showDlg() {
+        System.out.print("strSelTreeType =" + strSelTreeType);
+        String strShowDlg = "";
+        try {
+            if (strSelTreeType.equals("")) {
+                System.out.print("SelType=" + strSelTreeType);
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid Error", "Please select a Category");  
+
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+
+                strShowDlg = "dlg.hide()";
+            } else
+                strShowDlg = "dlg.show()";   
+        } catch (Exception ex) {
+            
+        }
+        System.out.print("show = " + strShowDlg);
+        return strShowDlg;
+    }
+            
+    public void onNodeExpand(NodeExpandEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Expanded", event.getTreeNode().toString());  
+  
+        FacesContext.getCurrentInstance().addMessage(null, message);  
     }  
   
+    public void onNodeCollapse(NodeCollapseEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Collapsed", event.getTreeNode().toString());  
+  
+        FacesContext.getCurrentInstance().addMessage(null, message);  
+    }  
+  
+    public void onNodeSelect(NodeSelectEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Selected", event.getTreeNode().toString());
+        
+        Global.strTreeType.add(event.getTreeNode().getType().toString());
+        Global.strTreeName.add(event.getTreeNode().toString());
+        
+        setStrSelectedTreeType(event.getTreeNode().getType().toString());        
+        setStrSelectedTreeName(event.getTreeNode().toString());
+        
+        setSelectedNode(event.getTreeNode());
+        
+        System.out.print(strSelectedTreeType);
+        
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        
+//        if (message.getDetail().equals("New Category")) {
+//            System.out.print("OK"); 
+//        }
+    }  
+  
+    public void onNodeUnselect(NodeUnselectEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Unselected", event.getTreeNode().toString());  
+  
+        FacesContext.getCurrentInstance().addMessage(null, message);  
+    }
+    
     public TreeNode getRoot() {  
         return root;  
     }
     
-    public String getName() {
-        return name;
+    public String getLblRegName() {
+        return lblRegName;
+    }
+    
+    public void setLblRegName(String strLbl) {
+        this.lblRegName = strLbl;
     }
     
     public String getRegName() {
+        System.out.print("regName="+regName);
         return regName;
     }
     
@@ -117,22 +296,6 @@ public class TaskTreeController {
     
     public void setDlgHeader(String str) {
         this.dlgHeader = str;
-    }
-    
-    public String getDlg() {
-        return dlg;
-    }
-    
-    public void setDlg(String dlg) {
-        this.dlg = dlg;
-    }
-    
-    public String getConfirmation() {
-        return confirmation;
-    }
-    
-    public void setConfirmation(String str) {
-        this.confirmation = str;
     }
     
     public TreeNode getSelectedNode() {  
@@ -158,121 +321,7 @@ public class TaskTreeController {
     public void setStrSelectedTreeName(String str) {
         this.strSelectedTreeName = str;
     }
-    
-    /**
-     * @discription: Action function from Save Dialog
-     * @param event 
-     */
-    public void submitAction() {
-        System.out.print("submit");
-        String strTreeName = "";
-        String strTreeType = "";
         
-        try {
-            strTreeName = Global.strTreeName.get(Global.strTreeName.size()-1);
-            strTreeType = Global.strTreeType.get(Global.strTreeType.size()-1);
-        } catch (Exception ex) {
-            
-        }
-        
-        if (strTreeType.equals("category")) {
-            if (!getCategoryDAO().findExistCategory(Global.getUserId(), strTreeName)) {
-                Category category = new Category();
-                category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
-                category.setCategoryName(strTreeName);
-                category.setUserId(Global.getUserId());
-
-                categoryDAO.save(category);
-            } else {
-                submitConfirm();
-            }
-        }
-    }
-    
-    /**
-     * @description: Get action to Save Dialog 
-     */
-    public String submitConfirm() {
-        String strSubmit = "";
-        
-        
-        return strSubmit;
-    }
-    
-    public void getTreeNodeInfo() {
-        System.out.print(Global.strTreeType.size());
-        showDlg();
-    }
-    
-    /*
-     * @discription Show Dialog from "New Category"
-     */
-    public String showDlg() {
-        
-        String strShowDlg = "";
-        String strType = "";
-        try {
-            strType = Global.strTreeType.get(Global.strTreeType.size()-1);
-        } catch (Exception ex) {
-            
-        }
-        
-        System.out.print("strType = " + strType);
-        
-        if (strType.equals("category")) {
-            setDlgHeader("Category Register");
-        } else if (strType.equals("project")) {
-            setDlgHeader("Project Register");
-        } else if (strType.equals("task")) {
-            setDlgHeader("Task Register");
-        } else {
-            setDlgHeader("");
-        }
-        
-        
-//        if (!strSelectedTreeName.equals(""))
-        strShowDlg = "dlg.show()";   
-        
-        return strShowDlg;
-    }
-  
-    public void onNodeExpand(NodeExpandEvent event) {  
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Expanded", event.getTreeNode().toString());  
-  
-        FacesContext.getCurrentInstance().addMessage(null, message);  
-    }  
-  
-    public void onNodeCollapse(NodeCollapseEvent event) {  
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Collapsed", event.getTreeNode().toString());  
-  
-        FacesContext.getCurrentInstance().addMessage(null, message);  
-    }  
-  
-    public void onNodeSelect(NodeSelectEvent event) {  
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Selected", event.getTreeNode().toString());
-        
-        Global.strTreeType.add(event.getTreeNode().getType().toString());
-        Global.strTreeName.add(event.getTreeNode().toString());
-        
-        setStrSelectedTreeType(event.getTreeNode().getType().toString());
-        
-        setStrSelectedTreeName(event.getTreeNode().toString());
-        
-        System.out.print(strSelectedTreeType);
-        
-        FacesContext.getCurrentInstance().addMessage(null, message);
-        
-//        if (message.getDetail().equals("New Category")) {
-//            System.out.print("OK"); 
-//        }
-    }  
-  
-    public void onNodeUnselect(NodeUnselectEvent event) {  
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Unselected", event.getTreeNode().toString());  
-  
-        FacesContext.getCurrentInstance().addMessage(null, message);  
-    }
-    
     public UserDAO getUserDAO() {
         if (userDAO == null)
             userDAO = new UserDAO();

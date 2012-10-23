@@ -81,12 +81,12 @@
             <version>2.2</version>
         </dependency>
         
-        <!-- primefaces theme -->
-        <!--<dependency>  
-            <groupId>org.primefaces.themes</groupId>  
-            <artifactId>cupertino</artifactId>  
-            <version>1.0.8</version>  
-        </dependency>-->
+        <dependency>
+            <groupId>org.primefaces.themes</groupId>
+            <artifactId>cupertino</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+        
     </dependencies>
 
     <build>
@@ -146,17 +146,18 @@
             <url>http://maven.springframework.org/milestone</url>
         </repository>
         <repository>
-            <url>http://repo1.maven.org/maven2/</url>
             <id>jsf20</id>
-            <layout>default</layout>
             <name>Repository for library Library[jsf20]</name>
+            <url>http://repo1.maven.org/maven2/</url>
+            <layout>default</layout>
         </repository>
         <repository>
-            <url>http://repository.primefaces.org/</url>
             <id>primefaces</id>
-            <layout>default</layout>
             <name>Repository for library Library[primefaces]</name>
+            <url>http://repository.primefaces.org/</url>
+            <layout>default</layout>
         </repository>
+       
     </repositories>
 
 </project>

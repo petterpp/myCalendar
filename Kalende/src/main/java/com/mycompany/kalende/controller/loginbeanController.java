@@ -4,7 +4,6 @@
  */
 package com.mycompany.kalende.controller;
 
-import com.mycompany.kalende.bean.loginbean;
 import com.mycompany.kalende.dao.UserDAO;
 import com.mycompany.kalende.global.Global;
 import com.mycompany.kalende.model.User;
@@ -19,7 +18,6 @@ import javax.faces.bean.RequestScoped;
 @RequestScoped
 public class loginbeanController {
  
-    private loginbean loginbean;
     private User user;
     private UserDAO userDAO;
     public String username;
@@ -27,10 +25,6 @@ public class loginbeanController {
 
     public loginbeanController() {
         super();
-    }
-
-    public loginbean getLoginbean() {
-        return loginbean;
     }
 
     public String getUsername() {
@@ -64,10 +58,6 @@ public class loginbeanController {
         }
 
         return userDAO;
-    }
-
-    public void setLoginbean(loginbean loginbean) {
-        this.loginbean = loginbean;
     }
 
     public String checkValidUser() {

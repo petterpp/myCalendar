@@ -101,13 +101,56 @@ public class ProjectDAO {
         
         return project;
     }
+    
+     public Project find(String name) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("projectName", name);
+
+        Project project = new Project();
+        DBCursor cur = coll.find(query);
+        while (cur.hasNext()) {
+            DBObject dbo = cur.next();
+            project.setProjectId((Integer) dbo.get("projectId"));
+            project.setProjectNaem((String) dbo.get("projectName"));
+            project.setCategoryId((Integer) dbo.get("categoryId"));
+        }
+        
+        return project;
+    }
+    
+    public boolean findExistProject(int categoryId, String name) {
+        boolean bExist = false;
+        
+        BasicDBObject query = new BasicDBObject();
+        query.put("categoryId", categoryId);
+        query.put("projectName", name);
+        
+        DBCursor cur = coll.find(query);
+        
+        if (cur.count() > 0)
+            bExist = true;
+        
+        return bExist;
+    }
+    
+    public int getMaxProjectId() {
+        DBCursor cur = coll.find();
+        int iMaxId = 0;
+        
+        while (cur.hasNext()) {
+            DBObject dbo = cur.next();
+            iMaxId ++;
+        }
+        
+        return iMaxId;
+    }
 
     public List<Project> findList(int categoryId) {
         BasicDBObject query = new BasicDBObject();
         query.put("categoryId", categoryId);
         
         List<Project> projects = new ArrayList<Project>();
-        DBCursor cur = coll.find();
+        DBCursor cur = coll.find(query);
         while (cur.hasNext()) {
             DBObject dbo = cur.next();
             Project project = new Project();

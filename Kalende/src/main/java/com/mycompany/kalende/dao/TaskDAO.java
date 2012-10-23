@@ -117,6 +117,33 @@ public class TaskDAO {
         
         return task;
     }
+    
+    public boolean findExistTask(int projectId, String name) {
+        boolean bExist = false;
+        
+        BasicDBObject query = new BasicDBObject();
+        query.put("projectId", projectId);
+        query.put("taskName", name);
+        
+        DBCursor cur = coll.find(query);
+        
+        if (cur.count() > 0)
+            bExist = true;
+        
+        return bExist;
+    }
+    
+    public int getMaxTaskId() {
+        DBCursor cur = coll.find();
+        int iMaxId = 0;
+        
+        while (cur.hasNext()) {
+            DBObject dbo = cur.next();
+            iMaxId ++;
+        }
+        
+        return iMaxId;
+    }
 
     public List<Task> findList(int projectId) {
         BasicDBObject query = new BasicDBObject();
