@@ -156,26 +156,29 @@ public class TaskTreeController {
                 loggedIn = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Task as same name.");
             }
-        } else if (strSelTreeType.equals("Task")) {
-            
+        } else if (strSelTreeType.equals("task")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Don't register in Task.");
         }
         
         try {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } catch (Exception ex) {
-            if (!getCategoryDAO().findExistCategory(Global.getUserId(), getRegName())) {
-                Category category = new Category();
-                category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
-                category.setCategoryName(getRegName());
-                category.setUserId(Global.getUserId());
+            if (strSelTreeType.equals("")) {
+                if (!getCategoryDAO().findExistCategory(Global.getUserId(), getRegName())) {
+                    Category category = new Category();
+                    category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
+                    category.setCategoryName(getRegName());
+                    category.setUserId(Global.getUserId());
 
-                getCategoryDAO().save(category);
-                
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Category '" +getRegName()+ "'");
-            } else {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Category as same name.");
+                    getCategoryDAO().save(category);
+
+                    loggedIn = true;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Category '" +getRegName()+ "'");
+                } else {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Category as same name.");
+                }
             }
         }
         
