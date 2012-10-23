@@ -123,22 +123,7 @@ public class TaskTreeController {
         }
         
         if (strSelTreeType.equals("category")) {
-            if (!getCategoryDAO().findExistCategory(Global.getUserId(), getRegName())) {
-                Category category = new Category();
-                category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
-                category.setCategoryName(getRegName());
-                category.setUserId(Global.getUserId());
-
-                getCategoryDAO().save(category);
-                
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Category '" +getRegName()+ "'");
-            } else {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Category as same name.");
-            }
-        } else if (strSelTreeType.equals("project")) {
-            iCategoryId = getProjectDAO().find(strSelTreeName).getCategoryId();
+            iCategoryId = getCategoryDAO().find(strSelTreeName).getCategoryId();
             
             if (!getProjectDAO().findExistProject(iCategoryId, getRegName())) {
                 Project project = new Project();
@@ -154,8 +139,8 @@ public class TaskTreeController {
                 loggedIn = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Project as same name.");
             }
-        } else if (strSelTreeType.equals("Task")) {
-            iProjectId = getTaskDAO().find(strSelTreeName).getProjectId();
+        } else if (strSelTreeType.equals("project")) {
+            iProjectId = getProjectDAO().find(strSelTreeName).getProjectId();
             
             if (!getTaskDAO().findExistTask(iProjectId, getRegName())) {
                 Task task = new Task();
@@ -171,9 +156,31 @@ public class TaskTreeController {
                 loggedIn = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Task as same name.");
             }
+        } else if (strSelTreeType.equals("Task")) {
+            
         }
+        
+        try {
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        } catch (Exception ex) {
+            if (!getCategoryDAO().findExistCategory(Global.getUserId(), getRegName())) {
+                Category category = new Category();
+                category.setCategoryId(getCategoryDAO().getMaxCategoryId()+1);
+                category.setCategoryName(getRegName());
+                category.setUserId(Global.getUserId());
+
+                getCategoryDAO().save(category);
+                
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully Register the Category '" +getRegName()+ "'");
+            } else {
+                loggedIn = false;
+                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Register Error", "Exist the Category as same name.");
+            }
+        }
+        
         init();
-        FacesContext.getCurrentInstance().addMessage(null, msg);  
+        
         context.addCallbackParam("loggedIn", loggedIn);
     }
     
