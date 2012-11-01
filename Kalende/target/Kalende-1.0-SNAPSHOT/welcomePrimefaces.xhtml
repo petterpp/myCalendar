@@ -13,6 +13,11 @@
             <link type="text/css" rel="stylesheet" href="/project/faces/javax.faces.resource/theme.css?ln=primefaces-cupertino" />
             <link rel="stylesheet" type="text/css" href="../cupertino.css" />
             <link rel="stylesheet" type="text/css" href="../CSS/schedule.css" />
+            <link rel='stylesheet' type='text/css' href='../CSS/jquery.weekcalendar.css' />
+  
+            <script type='text/javascript' src='../Lib/date.js'></script>
+            <script type='text/javascript' src='../Lib/jquery.weekcalendar.js'></script>
+            <script type='text/javascript' src='../Lib/jquery-ui-1.8.11.custom.min.js'></script>
 
             <script type="text/javascript">  
                 function handleLoginRequest(xhr, status, args) {  
@@ -22,7 +27,7 @@
                         jQuery('#form .ui-tree').effect("", { time:1}, 100);
                         dlg.hide();  
                     }  
-                }  
+                }
             </script>
         </h:head>
 
@@ -49,7 +54,7 @@
 
                                 <p:ajax event="expand" update=":form:growl" listener="#{taskTreeBean.onNodeExpand}" />  
                                 <p:ajax event="collapse" update=":form:growl" listener="#{taskTreeBean.onNodeCollapse}" />  
-                                <p:ajax event="select" update=":form:growl" listener="#{taskTreeBean.onNodeSelect}" />  
+                                <p:ajax event="select" update=":form:growl" listener="#{taskTreeBean.onNodeSelect}" oncomplete="treeSelectRequest(xhr, status, args)"/>  
                                 <p:ajax event="unselect" update=":form:growl" listener="#{taskTreeBean.onNodeUnselect}" />
 
                                 <p:treeNode type="category">
@@ -75,13 +80,39 @@
 
                     <!--Center Panel-->
                     <p:layoutUnit position="center" resizable="true" >
-                        <ui:include src="/pages/schedule.xhtml" />
+                        
+                        <div id="calendar">
+                            
+                        </div>
+                        
                     </p:layoutUnit>
                 </p:layout>
-
+                <div id="event_edit_container">
+		<form>
+			<input type="hidden" />
+			<ul>
+				<li>
+					<span>Date: </span><span class="date_holder"></span> 
+				</li>
+				<li>
+					<label for="start">Start Time: </label><select name="start"><option value="">Select Start Time</option></select>
+				</li>
+				<li>
+					<label for="end">End Time: </label><select name="end"><option value="">Select End Time</option></select>
+				</li>
+				<li>
+					<label for="title">Title: </label><input type="text" name="title" />
+				</li>
+				<li>
+					<label for="body">Body: </label><textarea name="body"></textarea>
+				</li>
+			</ul>
+		</form>
+	</div>
                 <!--Register New Item Dialog-->
                 <p:dialog id="ajaxDlg" header="New Category Register Dialog" widgetVar="dlg" dynamic="true" 
-                          resizable="false" width="415" style="font-size: 1em;">  
+                          resizable="false" width="415" style="font-size: 1em;" 
+                          showEffect="clip" hideEffect="clip">  
 
                         <h:panelGrid columns="2" cellpadding="5">  
                             <h:outputLabel for="lblRegName" value="New Name : *" />  

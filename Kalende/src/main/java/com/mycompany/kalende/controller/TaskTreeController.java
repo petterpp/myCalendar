@@ -193,7 +193,6 @@ public class TaskTreeController {
     public String submitConfirm() {
         String strSubmit = "";
         
-        
         return strSubmit;
     }
     
@@ -253,7 +252,8 @@ public class TaskTreeController {
         FacesContext.getCurrentInstance().addMessage(null, message);  
     }  
   
-    public void onNodeSelect(NodeSelectEvent event) {  
+    public String[] onNodeSelect(NodeSelectEvent event) {  
+        String[] selectInfo = new String[10];
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Selected", event.getTreeNode().toString());
         
         Global.strTreeType.add(event.getTreeNode().getType().toString());
@@ -264,13 +264,12 @@ public class TaskTreeController {
         
         setSelectedNode(event.getTreeNode());
         
-        System.out.print(strSelectedTreeType);
+        selectInfo[0] = Global.strTreeType.toString();
+        selectInfo[1] = Global.strTreeName.toString();
         
         FacesContext.getCurrentInstance().addMessage(null, message);
         
-//        if (message.getDetail().equals("New Category")) {
-//            System.out.print("OK"); 
-//        }
+        return selectInfo;
     }  
   
     public void onNodeUnselect(NodeUnselectEvent event) {  

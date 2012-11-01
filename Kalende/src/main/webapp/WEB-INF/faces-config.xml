@@ -67,6 +67,12 @@ and open the template in the editor.
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     
+    <managed-bean>
+        <managed-bean-name>scheduleController</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.controller.ScheduleController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
     <!--<navigation-rule>
         <description>ReLoging Page</description>
         <from-view-id>faces/pages/login_fail.jsp</from-view-id>
