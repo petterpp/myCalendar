@@ -8,6 +8,6 @@
         
     </head>
     <body>
-        <jsp:forwardpage="/faces/pages/login.jsp" />
+        <jsp:forwardpage="/faces/pages/login.xhtml" />
     </body>
 </html>

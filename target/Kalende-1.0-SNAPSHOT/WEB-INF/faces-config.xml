@@ -21,13 +21,12 @@ and open the template in the editor.
     <navigation-rule>
         <description>Loging Page</description>
         
-        <navigation-case>
-            
+        <navigation-case>            
             <from-outcome>valid</from-outcome>
             <to-view-id>faces/welcomePrimefaces.xhtml</to-view-id>
         </navigation-case>
-        <navigation-case>
-            
+        
+        <navigation-case>            
             <from-outcome>invalid</from-outcome>
             <to-view-id>/pages/loginfail.jsp</to-view-id>
         </navigation-case>
@@ -42,7 +41,6 @@ and open the template in the editor.
     <navigation-rule>
         <description>Loging Page</description>
         <from-view-id>/welcomePrimefaces.xhtml</from-view-id>
-        
         <!--<navigation-case>
             
             <from-outcome>valid</from-outcome>
@@ -57,14 +55,14 @@ and open the template in the editor.
     </navigation-rule>
     
     <managed-bean>
-        <managed-bean-name>taskTree</managed-bean-name>
+        <managed-bean-name>taskTreeBean</managed-bean-name>
         <managed-bean-class>com.mycompany.kalende.controller.TaskTreeController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
-    
+            
     <managed-bean>
-        <managed-bean-name>categoryController</managed-bean-name>
-        <managed-bean-class>com.mycompany.kalende.controller.CategoryController</managed-bean-class>
+        <managed-bean-name>scheduleController</managed-bean-name>
+        <managed-bean-class>com.mycompany.kalende.controller.ScheduleController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     

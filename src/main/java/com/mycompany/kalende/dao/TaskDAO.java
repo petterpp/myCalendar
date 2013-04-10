@@ -27,36 +27,68 @@ public class TaskDAO {
     public TaskDAO() {
         coll = DBConnection.getDBCollection("task");
         
-        /*BasicDBObject query = new BasicDBObject();
-        query.put("taskName", "Sleep");
+        BasicDBObject query = new BasicDBObject();
         query.put("taskId", 1);
+        query.put("taskName", "Project A");
+        query.put("projectId", 0);
         
         DBCursor cur = coll.find(query);
         if (cur.size() == 0) {
             BasicDBObject bdbo = new BasicDBObject();
             bdbo.put("taskId", 1);
+            bdbo.put("taskName", "Project A");
+            bdbo.put("projectId", 0);
+            coll.save(bdbo);
+            
+            bdbo = new BasicDBObject();
+            bdbo.put("taskId", 2);
+            bdbo.put("taskName", "Project B");
+            bdbo.put("projectId", 0);
+            coll.save(bdbo);
+            
+            bdbo = new BasicDBObject();
+            bdbo.put("taskId", 3);
+            bdbo.put("taskName", "Project C");
+            bdbo.put("projectId", 0);
+            coll.save(bdbo);
+            
+            bdbo = new BasicDBObject();
+            bdbo.put("taskId", 4);
+            bdbo.put("taskName", "HelpDesk");
+            bdbo.put("projectId", 0);
+            coll.save(bdbo);
+        }
+        
+        query.put("taskId", 5);
+        query.put("taskName", "Sleep");
+        query.put("projectId", 1);
+        
+        DBCursor cur1 = coll.find(query);
+        if (cur1.size() == 0) {
+            BasicDBObject bdbo = new BasicDBObject();
+            bdbo.put("taskId", 5);
             bdbo.put("taskName", "Sleep");
             bdbo.put("projectId", 1);
             coll.save(bdbo);
             
             bdbo = new BasicDBObject();
-            bdbo.put("taskId", 2);
+            bdbo.put("taskId", 6);
             bdbo.put("taskName", "Eat");
             bdbo.put("projectId", 1);
             coll.save(bdbo);
             
             bdbo = new BasicDBObject();
-            bdbo.put("taskId", 3);
+            bdbo.put("taskId", 7);
             bdbo.put("taskName", "Drive and audio");
             bdbo.put("projectId", 1);
             coll.save(bdbo);
             
             bdbo = new BasicDBObject();
-            bdbo.put("taskId", 4);
+            bdbo.put("taskId", 8);
             bdbo.put("taskName", "Family time");
             bdbo.put("projectId", 1);
             coll.save(bdbo);
-        }*/
+        }
     }
 
     public void save(Task task) {
@@ -86,7 +118,7 @@ public class TaskDAO {
         coll.update(query, bdbo);
     }
 
-    public Task find(String taskName) {
+    public Task findByName(String taskName) {
         BasicDBObject query = new BasicDBObject();
         query.put("taskName", taskName);
 

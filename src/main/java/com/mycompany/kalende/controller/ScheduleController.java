@@ -4,15 +4,18 @@
  */
 package com.mycompany.kalende.controller;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import javax.annotation.ManagedBean;
+import javax.faces.bean.ManagedBean;
+import javax.annotation.PostConstruct;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
@@ -22,7 +25,6 @@ import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.ScheduleEntrySelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
@@ -30,43 +32,32 @@ import org.primefaces.model.ScheduleModel;
  *
  * @author Jacob
  */
-@ManagedBean
+@ManagedBean(name="scheduleController")
 @SessionScoped
-public class ScheduleController implements Serializable{
-
-    private ScheduleModel budgetModel;    
-    private ScheduleModel eventModel;
-
-    private ScheduleModel lazyEventModel;
+public class ScheduleController implements Serializable {
     
-    private ScheduleEvent budgetEvent = new DefaultScheduleEvent();
-    private ScheduleEvent event = new DefaultScheduleEvent();
+    private ScheduleModel budgetModel;    
+    private ScheduleModel trackingModel;
+
+    public ScheduleEvent budgetEvent = new DefaultScheduleEvent();
+    public ScheduleEvent trackingEvent = new DefaultScheduleEvent();
 
     private String theme;
 
     public ScheduleController() {
-
-        eventModel = new DefaultScheduleModel();
-        //     eventModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
-        //     eventModel.addEvent(new DefaultScheduleEvent("Birthday Party", today1Pm(), today6Pm()));
-        //     eventModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys", nextDay9Am(), nextDay11Am()));
-        //     eventModel.addEvent(new DefaultScheduleEvent("Plant the new garden stuff", theDayAfter3Pm(), fourDaysLater3pm()));
         
+    }
+    
+    @PostConstruct
+    public void init() {
         budgetModel = new DefaultScheduleModel();
+             budgetModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
+             budgetModel.addEvent(new DefaultScheduleEvent("Birthday Party", today1Pm(), today6Pm()));
         
-        lazyEventModel = new LazyScheduleModel() {
-
-            @Override
-            public void loadEvents(Date start, Date end) {
-                clear();
-
-                Date random = getRandomDate(start);
-                addEvent(new DefaultScheduleEvent("Lazy Event 1", random, random));
-
-                random = getRandomDate(start);
-                addEvent(new DefaultScheduleEvent("Lazy Event 2", random, random));
-            }
-        };
+        trackingModel = new DefaultScheduleModel();
+            trackingModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys", nextDay9Am(), nextDay11Am()));
+            trackingModel.addEvent(new DefaultScheduleEvent("Plant the new garden stuff", theDayAfter3Pm(), fourDaysLater3pm()));
+        
     }
 
     public Date getRandomDate(Date base) {
@@ -83,18 +74,22 @@ public class ScheduleController implements Serializable{
             return calendar.getTime();
     }
     
-    public ScheduleModel getBudgetMoel() {
+    public ScheduleModel getBudgetModel() {
         return budgetModel;
     }
-
-    public ScheduleModel getEventModel() {
-        return eventModel;
+    
+    public void setBudgetModel(ScheduleModel model) {
+        this.budgetModel = model;
     }
 
-    public ScheduleModel getLazyEventModel() {
-        return lazyEventModel;
+    public ScheduleModel getTrackingModel() {
+        return trackingModel;
     }
 
+    public void setTrackingModel(ScheduleModel model) {
+        this.trackingModel = model;
+    }
+    
     private Calendar today() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
@@ -172,12 +167,12 @@ public class ScheduleController implements Serializable{
         return t.getTime();
     }
 
-    public ScheduleEvent getEvent() {
-        return event;
+    public ScheduleEvent getTrackingEvent() {
+        return trackingEvent;
     }
 
-    public void setEvent(ScheduleEvent event) {
-        this.event = event;
+    public void setTrackingEvent(ScheduleEvent event) {
+        this.trackingEvent = event;
     }
     
     public void addBudgetEvent(ActionEvent actionEvent) {
@@ -189,30 +184,47 @@ public class ScheduleController implements Serializable{
         budgetEvent = new DefaultScheduleEvent();
     }
 
-    public void addEvent(ActionEvent actionEvent) {
-        if(event.getId() == null)
-            eventModel.addEvent(event);
+    public void addTrackingEvent(ActionEvent actionEvent) {
+        if(trackingEvent.getId() == null)
+            trackingModel.addEvent(trackingEvent);
         else
-            eventModel.updateEvent(event);
+            trackingModel.updateEvent(trackingEvent);
 
-        event = new DefaultScheduleEvent();
+        trackingEvent = new DefaultScheduleEvent();
     }
 
-    public void onEventSelect(ScheduleEntrySelectEvent selectEvent) {
-        event = selectEvent.getScheduleEvent();
+    public void onBudgetEventSelect(ScheduleEntrySelectEvent selectEvent) {
+        budgetEvent = selectEvent.getScheduleEvent();
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event Select", budgetEvent.toString());
+        System.out.print(budgetEvent.toString());
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        
     }
 
-    public void onDateSelect(DateSelectEvent selectEvent) {
-        event = new DefaultScheduleEvent(Math.random() + "", selectEvent.getDate(), selectEvent.getDate());
+    public void onBudgetDateSelect(MouseAdapter  event) {
+        System.out.print(event.toString());
+        
+//        budgetEvent = new DefaultScheduleEvent("", event.getDate(), event.getDate());
+//
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "+", budgetEvent.getStartDate().toString());
+//        FacesContext.getCurrentInstance().addMessage(null, message);
     }
-
-    public void onEventMove(ScheduleEntryMoveEvent event) {
+    
+    public void onBudgetMouseDown(MouseEvent event) {
+        System.out.print("Mouse Down!!!!");
+        
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Mouse Down", event.getPoint().toString());
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+    
+    public void onBudgetEventMove(ScheduleEntryMoveEvent event) {
+        System.out.print("Event Move");
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
         addMessage(message);
     }
 
-    public void onEventResize(ScheduleEntryResizeEvent event) {
+    public void onBudgetEventResize(ScheduleEntryResizeEvent event) {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 
         addMessage(message);
@@ -229,4 +241,5 @@ public class ScheduleController implements Serializable{
     public void setTheme(String theme) {
         this.theme = theme;
     }
+
 }

@@ -24,38 +24,21 @@ public class ProjectDAO {
     private DBCollection coll;
     
     public ProjectDAO() {
-        coll = DBConnection.getDBCollection("project");
+        if (coll == null)
+            coll = DBConnection.getDBCollection("project");
         
         BasicDBObject query = new BasicDBObject();
         query.put("projectId", 1);
-        query.put("projectName", "Sleep");
+        query.put("projectName", "");
         query.put("categoryId", 1);
         
         DBCursor cur = coll.find(query);
         if (cur.size() == 0) {
             BasicDBObject bdbo = new BasicDBObject();
             bdbo.put("projectId", 1);
-            bdbo.put("projectName", "Sleep");
+            bdbo.put("projectName", "");
             bdbo.put("categoryId", 1);
-            coll.save(bdbo);
-            
-            bdbo = new BasicDBObject();
-            bdbo.put("projectId", 2);
-            bdbo.put("projectName", "Eat");
-            bdbo.put("categoryId", 1);
-            coll.save(bdbo);
-            
-            bdbo = new BasicDBObject();
-            bdbo.put("projectId", 3);
-            bdbo.put("projectName", "Drive and audio");
-            bdbo.put("categoryId", 1);
-            coll.save(bdbo);
-            
-            bdbo = new BasicDBObject();
-            bdbo.put("projectId", 4);
-            bdbo.put("projectName", "Family time");
-            bdbo.put("categoryId", 1);
-            coll.save(bdbo);
+            coll.save(bdbo);            
         }
     }
 
@@ -150,7 +133,7 @@ public class ProjectDAO {
         query.put("categoryId", categoryId);
         
         List<Project> projects = new ArrayList<Project>();
-        DBCursor cur = coll.find();
+        DBCursor cur = coll.find(query);
         while (cur.hasNext()) {
             DBObject dbo = cur.next();
             Project project = new Project();

@@ -5,6 +5,7 @@
 package com.mycompany.kalende.global;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,8 +15,13 @@ import java.util.List;
 public class Global {
     private static int userId = 0;
     private static String userName = "";
+    private static boolean chooseEvent = false;
     
     public static String strTempText = "";
+    
+    public static Date STARTDATE = new Date();
+    public static Date ENDDATE = new Date();
+    
     public static List<String> strTreeType = new ArrayList<String>();
     public static List<String> strTreeName = new ArrayList<String>();
     
@@ -35,4 +41,11 @@ public class Global {
         userName = name;
     }
     
+    public static boolean getChooseEvent() {
+        return chooseEvent;
+    }
+
+    public static void setChooseEvent(boolean chooseEvent) {
+        Global.chooseEvent = chooseEvent;
+    }
 }
